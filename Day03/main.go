@@ -22,6 +22,7 @@ func checkForAdjacentSymbols(x int, y int, schematic [][]byte) bool {
 	minY := max(y-1, 0)
 	maxX := min(x+1, len(schematic[0])-1)
 	maxY := min(y+1, len(schematic)-1)
+
 	if isSymbol(schematic[minY][minX]) {
 		return true
 	}
@@ -60,37 +61,39 @@ func Part1(filename string) int {
 	schematic := convertToSchematic(input)
 	var sum int
 	var includedNums []int
-	for y := 0; y < len(schematic); y++ {
+	for y := 0; y < len(schematic); y++ { //for each row
 		var curNumber int
 		var isPartNumber bool
-		for x := 0; x < len(schematic[0]); x++ {
+		for x := 0; x < len(schematic[0]); x++ { //for each cell in a row
 			c := schematic[y][x]
 			isDigit := c >= '0' && c <= '9'
-			if isDigit && curNumber == 0 { //discovered new number
+			if isDigit && curNumber == 0 { //start of a number (ie 6 in 642.#)
 				curNumber, _ = strconv.Atoi(string(c))
 				if checkForAdjacentSymbols(x, y, schematic) {
 					isPartNumber = true
 				}
-			} else if isDigit && curNumber > 0 { //inside of  number
+			} else if isDigit && curNumber > 0 { //non-starting digit of a number (ie 4 or 2 in 642..)
 				n, _ := strconv.Atoi(string(c))
 				curNumber = curNumber*10 + n
 				if checkForAdjacentSymbols(x, y, schematic) {
 					isPartNumber = true
 				}
-			} else if !isDigit && curNumber > 0 { //just finished a number
+			} else if !isDigit && curNumber > 0 { //just finished a number (ie . in 642.#)
 				if isPartNumber {
 					sum += curNumber
 					includedNums = append(includedNums, curNumber)
 				}
 				curNumber = 0
 				isPartNumber = false
-			} else {
+			} else { //not a number or directly after a number (ie # in 642.#)
 				curNumber = 0
 				isPartNumber = false
 			}
 		}
+		if isPartNumber && curNumber > 0 { //needed when a row ends on a valid part number
+			sum += curNumber
+		}
 	}
-	//fmt.Print(includedNums)
 	return sum
 }
 
