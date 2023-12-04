@@ -125,3 +125,11 @@ func TestGetWordNumber2(t *testing.T) {
 		t.Errorf("got %d want %d", got, want)
 	}
 }
+
+func TestGetWordNumber3(t *testing.T) {
+	got, _ := getWordNumber("eihtwothree")
+	want := 0
+	if got != want {
+		t.Errorf("got %d want %d", got, want)
+	}
+}
