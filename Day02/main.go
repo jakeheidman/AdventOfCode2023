@@ -5,6 +5,8 @@ import (
 	"log"
 	"strconv"
 	"strings"
+
+	"github.com/jakeheidman/AdventOfCode2023/helpers"
 )
 
 type game struct {
@@ -24,7 +26,7 @@ func LineToGame(line string) *game {
 	gameID, _ := strconv.Atoi(strings.TrimPrefix(gameSubstring, "Game "))
 	ballDraws := strings.Split(ballsSubstring, ", ")
 	for _, draw := range ballDraws {
-		numBalls, _ := strconv.Atoi(string(draw[0]))
+		numBalls, _ := strconv.Atoi(strings.Split(draw, " ")[0])
 		if strings.Contains(draw, "blue") {
 			blue = max(blue, numBalls)
 		} else if strings.Contains(draw, "red") {
@@ -42,14 +44,22 @@ func LineToGame(line string) *game {
 	return &game
 }
 
-func Day2Part1(filename string) int {
-	// input := helpers.ParseInput(filename)
-	// for _, line := range input {
+func isGameValid(game *game) bool {
+	return game.red <= 12 && game.green <= 13 && game.blue <= 14
+}
 
-	// }
-	return 0
+func Day2Part1(filename string) int {
+	input := helpers.ParseInput(filename)
+	var sum int
+	for _, line := range input {
+		game := LineToGame(line)
+		if isGameValid(game) {
+			sum += game.id
+		}
+	}
+	return sum
 }
 
 func main() {
-	fmt.Println(Day2Part1("test_input1.txt"))
+	fmt.Println(Day2Part1("input.txt"))
 }
