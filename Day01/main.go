@@ -145,10 +145,15 @@ func GetUpdatedCalibrationValue(line string) int {
 }
 
 func Part2(filename string) int {
-	return 0
+	input := ParseInput(filename)
+	var sum int
+	for _, line := range input {
+		sum += GetUpdatedCalibrationValue(line)
+	}
+	return sum
 }
 
 func main() {
-	fmt.Println(Part1("input1.txt"))
-
+	fmt.Println(Part1("input.txt"))
+	fmt.Println(Part2("input.txt"))
 }
