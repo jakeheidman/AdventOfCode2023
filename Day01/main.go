@@ -1,33 +1,13 @@
 package main
 
 import (
-	"bufio"
 	"errors"
 	"fmt"
-	"log"
-	"os"
 	"strconv"
 	"strings"
+
+	"github.com/jakeheidman/AdventOfCode2023/helpers"
 )
-
-func ParseInput(filename string) []string {
-	file, err := os.Open(filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	var lines []string
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		lines = append(lines, line)
-	}
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
-	return lines
-}
 
 func runeIsInt(char rune) bool {
 	return char >= '0' && char <= '9'
@@ -49,7 +29,7 @@ func GetCalibrationValue(line string) int {
 }
 
 func Part1(filename string) int {
-	input := ParseInput(filename)
+	input := helpers.ParseInput(filename)
 	var sum int
 	for _, line := range input {
 		calibrationValue := GetCalibrationValue(line)
@@ -145,7 +125,7 @@ func GetUpdatedCalibrationValue(line string) int {
 }
 
 func Part2(filename string) int {
-	input := ParseInput(filename)
+	input := helpers.ParseInput(filename)
 	var sum int
 	for _, line := range input {
 		sum += GetUpdatedCalibrationValue(line)
