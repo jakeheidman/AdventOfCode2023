@@ -2,7 +2,7 @@ package main
 
 import "testing"
 
-func TestDay01(t *testing.T) {
+func TestPart1(t *testing.T) {
 	got := Part1("test_input1.txt")
 	want := 142
 	if got != want {
@@ -37,6 +37,14 @@ func TestGetCalibrationValue3(t *testing.T) {
 func TestGetCalibrationValue4(t *testing.T) {
 	got := GetCalibrationValue("treb7uchet")
 	want := 77
+	if got != want {
+		t.Errorf("got %d want %d", got, want)
+	}
+}
+
+func TestPart2(t *testing.T) {
+	got := Part2("test_input2.txt")
+	want := 281
 	if got != want {
 		t.Errorf("got %d want %d", got, want)
 	}
