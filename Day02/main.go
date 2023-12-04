@@ -61,9 +61,17 @@ func Day2Part1(filename string) int {
 }
 
 func Day2Part2(filename string) int {
-	return 0
+	input := helpers.ParseInput(filename)
+	var sum int
+	for _, line := range input {
+		game := LineToGame(line)
+		power := game.red * game.green * game.blue
+		sum += power
+	}
+	return sum
 }
 
 func main() {
 	fmt.Println(Day2Part1("input.txt"))
+	fmt.Println(Day2Part2("input.txt"))
 }
