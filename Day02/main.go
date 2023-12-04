@@ -60,6 +60,10 @@ func Day2Part1(filename string) int {
 	return sum
 }
 
+func Day2Part2(filename string) int {
+	return 0
+}
+
 func main() {
 	fmt.Println(Day2Part1("input.txt"))
 }

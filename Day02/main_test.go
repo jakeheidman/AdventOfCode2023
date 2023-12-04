@@ -6,7 +6,7 @@ import (
 )
 
 func TestPart1(t *testing.T) {
-	got := Day2Part1("test_input1.txt")
+	got := Day2Part1("test_input.txt")
 	want := 8
 	if got != want {
 		t.Errorf("got %d want %d", got, want)
@@ -34,5 +34,13 @@ func TestLineToGame(t *testing.T) {
 	want := &game{id: 1, red: 4, green: 2, blue: 6}
 	if err, state := compareGames(got, want); !state {
 		t.Errorf("field did not match: " + err)
+	}
+}
+
+func TestPart2(t *testing.T) {
+	got := Day2Part2("test_input.txt")
+	want := 2286
+	if got != want {
+		t.Errorf("got %d want %d", got, want)
 	}
 }
