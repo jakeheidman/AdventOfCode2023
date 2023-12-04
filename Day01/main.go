@@ -56,6 +56,10 @@ func Part1(filename string) int {
 	return sum
 }
 
+func GetUpdatedCalibrationValue(line string) int {
+	return 0
+}
+
 func Part2() int {
 	return 0
 }
