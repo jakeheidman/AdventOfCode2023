@@ -116,28 +116,33 @@ func subStrInElems(needle string) (string, int) {
 	return "", 0
 }
 
-// func GetUpdatedCalibrationValue(line string) int {
+func GetUpdatedCalibrationValue(line string) int {
 
-// 	starterChars := []byte{'o', 't', 'f', 's', 'e', 'n',
-// 		'1', '2', '3', '4', '5', '6', '7', '8', '9'}
-// 	var first_num, last_num int
-// 	for i := 0; i < len(line); i++ {
-// 		c := line[i]
-// 		if byteIsInt(c) {
-// 			if first_num == 0 {
-// 				first_num, _ = strconv.Atoi(string(c))
-// 			}
-// 			last_num, _ = strconv.Atoi(string(c))
-// 		} else {
-// 			if in(starterChars, c) {
-// 				//get the number, and then increment i to the last character
+	starterChars := []byte{'o', 't', 'f', 's', 'e', 'n',
+		'1', '2', '3', '4', '5', '6', '7', '8', '9'}
+	var first_num, last_num int
+	for i := 0; i < len(line); i++ {
+		c := line[i]
+		if byteIsInt(c) {
+			if first_num == 0 {
+				first_num, _ = strconv.Atoi(string(c))
+			}
+			last_num, _ = strconv.Atoi(string(c))
+		} else {
+			if in(starterChars, c) {
+				validNumber, err := getWordNumber(line[i:])
+				if err == nil {
+					if first_num == 0 {
+						first_num = validNumber
+					}
+					last_num = validNumber
+				}
+			}
+		}
+	}
 
-// 			}
-// 		}
-
-// 	}
-// 	return 0
-// }
+	return first_num*10 + last_num
+}
 
 func Part2(filename string) int {
 	return 0
