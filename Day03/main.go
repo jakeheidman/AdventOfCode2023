@@ -8,6 +8,12 @@ import (
 	"github.com/jakeheidman/AdventOfCode2023/helpers"
 )
 
+type schematic_number struct {
+	value     int
+	start_idx int
+	end_idx   int
+}
+
 func convertToSchematic(input []string) [][]byte {
 	schematic := [][]byte{}
 	for _, line := range input {
@@ -56,6 +62,10 @@ func isSymbol(b byte) bool {
 	return strings.Contains(symbols, string(b))
 }
 
+func isDigit(b byte) bool {
+	return b >= '0' && b <= '9'
+}
+
 func Part1(filename string) int {
 	input := helpers.ParseInput(filename)
 	schematic := convertToSchematic(input)
@@ -97,6 +107,104 @@ func Part1(filename string) int {
 	return sum
 }
 
+func getNumbersFromRow(row []byte) []schematic_number {
+	var schematic_numbers []schematic_number
+	var buildingNumber bool
+	curNumber := 0
+	var idx_start int
+	for x := 0; x < len(row); x++ {
+		cell := row[x]
+		if isDigit(cell) && !buildingNumber {
+			buildingNumber = true
+			curNumber, _ = strconv.Atoi(string(cell))
+			idx_start = x
+		} else if isDigit(cell) && buildingNumber {
+			cellValue, _ := strconv.Atoi(string(cell))
+			curNumber = curNumber*10 + cellValue
+		} else if !isDigit(cell) && buildingNumber {
+			new_schematic_num := schematic_number{value: curNumber, start_idx: idx_start, end_idx: x - 1}
+			schematic_numbers = append(schematic_numbers, new_schematic_num)
+			idx_start = 0
+			buildingNumber = false
+			curNumber = 0
+		}
+	}
+	if buildingNumber {
+		new_schematic_num := schematic_number{value: curNumber, start_idx: idx_start, end_idx: len(row) - 1}
+		schematic_numbers = append(schematic_numbers, new_schematic_num)
+	}
+	return schematic_numbers
+}
+
+func getValidPartNumbers(nums []schematic_number, x int) []int {
+	var validPartNums []int
+	for _, schemNum := range nums {
+		if (x-1 >= schemNum.start_idx && x-1 <= schemNum.end_idx) || (x >= schemNum.start_idx && x <= schemNum.end_idx) || (x+1 >= schemNum.start_idx && x+1 <= schemNum.end_idx) {
+			validPartNums = append(validPartNums, schemNum.value)
+		}
+	}
+	return validPartNums
+}
+
+func Part2(filename string) int {
+	input := helpers.ParseInput(filename)
+	schematic := convertToSchematic(input)
+	savedNumberInfo := make([][]schematic_number, len(schematic))
+	const GEAR = '*'
+	for y := 0; y < len(schematic); y++ {
+		savedNumberInfo[y] = getNumbersFromRow(schematic[y])
+	}
+	var sum int
+	for y := 0; y < len(schematic); y++ {
+		for x := 0; x < len(schematic[y]); x++ {
+			cell := schematic[y][x]
+			if cell == GEAR {
+				var validPartsAbove, validPartsBelow []int
+				if y > 0 {
+					validPartsAbove = getValidPartNumbers(savedNumberInfo[y-1], x)
+				}
+				if y < len(schematic)-1 {
+					validPartsBelow = getValidPartNumbers(savedNumberInfo[y+1], x)
+				}
+				var leftNumBuilder, rightNumBuilder string
+				var leftNum, rightNum int
+				var leftExists, rightExists bool
+				if x > 0 && isDigit(schematic[y][x-1]) { //calculate left part number
+					leftExists = true
+					for xIter := x - 1; xIter > 0; xIter-- {
+						leftCell := schematic[y][xIter]
+						leftNumBuilder = string(leftCell) + leftNumBuilder
+					}
+					leftNum, _ = strconv.Atoi(leftNumBuilder)
+				}
+				if x < len(schematic[y])-1 && isDigit(schematic[y][x+1]) { //calculate right part number
+					rightExists = true
+					for xIter := x + 1; xIter < len(schematic[y]); xIter++ {
+						rightCell := schematic[y][xIter]
+						rightNumBuilder = rightNumBuilder + string(rightCell)
+					}
+					rightNum, _ = strconv.Atoi(rightNumBuilder)
+				}
+				allValidPartNumbers := append(validPartsAbove, validPartsBelow...)
+				if leftExists {
+					allValidPartNumbers = append(allValidPartNumbers, leftNum)
+				}
+				if rightExists {
+					allValidPartNumbers = append(allValidPartNumbers, rightNum)
+				}
+				if len(allValidPartNumbers) == 2 {
+					sum += allValidPartNumbers[0] * allValidPartNumbers[1]
+				}
+
+			}
+		}
+	}
+	return sum
+}
+
 func main() {
-	fmt.Println(Part1("input.txt"))
+	// input := helpers.ParseInput("input.txt")
+	// schematic := convertToSchematic(input)
+	// fmt.Println(getNumbersFromRow(schematic[0]))
+	fmt.Println(Part2("input.txt"))
 }

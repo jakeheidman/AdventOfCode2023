@@ -9,3 +9,11 @@ func TestPart1(t *testing.T) {
 		t.Errorf("got %d want %d", got, want)
 	}
 }
+
+func TestPart2(t *testing.T) {
+	got := Part2("test_input.txt")
+	want := 467835
+	if got != want {
+		t.Errorf("got %d want %d", got, want)
+	}
+}
