@@ -173,6 +173,9 @@ func Part2(filename string) int {
 					leftExists = true
 					for xIter := x - 1; xIter > 0; xIter-- {
 						leftCell := schematic[y][xIter]
+						if !isDigit(leftCell) {
+							break
+						}
 						leftNumBuilder = string(leftCell) + leftNumBuilder
 					}
 					leftNum, _ = strconv.Atoi(leftNumBuilder)
@@ -181,6 +184,9 @@ func Part2(filename string) int {
 					rightExists = true
 					for xIter := x + 1; xIter < len(schematic[y]); xIter++ {
 						rightCell := schematic[y][xIter]
+						if !isDigit(rightCell) {
+							break
+						}
 						rightNumBuilder = rightNumBuilder + string(rightCell)
 					}
 					rightNum, _ = strconv.Atoi(rightNumBuilder)
@@ -203,8 +209,6 @@ func Part2(filename string) int {
 }
 
 func main() {
-	// input := helpers.ParseInput("input.txt")
-	// schematic := convertToSchematic(input)
-	// fmt.Println(getNumbersFromRow(schematic[0]))
+	fmt.Println(Part1("input.txt"))
 	fmt.Println(Part2("input.txt"))
 }
