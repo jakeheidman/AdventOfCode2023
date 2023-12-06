@@ -35,6 +35,21 @@ func (c *card) getPoints() int {
 	}
 }
 
+func (c *card) getNumMatchingWinners() int {
+	numberOfWinners := 0
+	for _, cardNum := range c.player_numbers {
+		for _, winningNum := range c.winning_numbers {
+			if cardNum == winningNum {
+				numberOfWinners += 1
+				break
+			} else if cardNum < winningNum {
+				break
+			}
+		}
+	}
+	return numberOfWinners
+}
+
 func CreateCard(line string) *card {
 	split := strings.Split(line, "|")
 	cardProperties := split[0]
@@ -83,6 +98,36 @@ func Part1(filename string) int {
 	return sum
 }
 
+func Part2(filename string) int {
+	input := helpers.ParseInput(filename)
+	var allCards [][]card
+	for _, line := range input {
+		curCard := CreateCard(line)
+		var curCardStack []card
+		curCardStack = append(curCardStack, *curCard)
+		allCards = append(allCards, curCardStack)
+	}
+	for idx, cardStack := range allCards {
+		points := cardStack[0].getNumMatchingWinners()
+
+		var counter int
+		for ; points > 0; points-- {
+			numCardsToAdd := len(cardStack)
+			for ; numCardsToAdd > 0; numCardsToAdd-- {
+				copy := allCards[idx][0]
+				allCards[idx+1+counter] = append(allCards[idx+1+counter], copy)
+
+			}
+			counter++
+		}
+	}
+	var numCards int
+	for _, cardStack := range allCards {
+		numCards += len(cardStack)
+	}
+	return numCards
+}
+
 func main() {
-	fmt.Println(Part1("input.txt"))
+	fmt.Println(Part2("input.txt"))
 }

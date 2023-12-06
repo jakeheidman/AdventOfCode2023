@@ -36,3 +36,11 @@ func TestCreateCard(t *testing.T) {
 	// 	t.Errorf("players numbers do not match")
 	// }
 }
+
+func TestPart2(t *testing.T) {
+	got := Part2("test_input.txt")
+	want := 30
+	if got != want {
+		t.Errorf("got %d want %d", got, want)
+	}
+}
