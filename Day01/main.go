@@ -47,10 +47,6 @@ func in(haystack []byte, needle byte) bool {
 	return false
 }
 
-func byteIsInt(b byte) bool {
-	return b >= '0' && b <= '9'
-}
-
 // example input -> two1nine
 // example output -> 2
 func getWordNumber(restOfLine string) (int, error) {
@@ -103,7 +99,7 @@ func GetUpdatedCalibrationValue(line string) int {
 	var first_num, last_num int
 	for i := 0; i < len(line); i++ {
 		c := line[i]
-		if byteIsInt(c) {
+		if helpers.IsDigit(c) {
 			if first_num == 0 {
 				first_num, _ = strconv.Atoi(string(c))
 			}

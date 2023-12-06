@@ -62,10 +62,6 @@ func isSymbol(b byte) bool {
 	return strings.Contains(symbols, string(b))
 }
 
-func isDigit(b byte) bool {
-	return b >= '0' && b <= '9'
-}
-
 func Part1(filename string) int {
 	input := helpers.ParseInput(filename)
 	schematic := convertToSchematic(input)
@@ -76,19 +72,19 @@ func Part1(filename string) int {
 		var isPartNumber bool
 		for x := 0; x < len(schematic[0]); x++ { //for each cell in a row
 			c := schematic[y][x]
-			isDigit := c >= '0' && c <= '9'
-			if isDigit && curNumber == 0 { //start of a number (ie 6 in 642.#)
+			cIsDigit := helpers.IsDigit(c)
+			if cIsDigit && curNumber == 0 { //start of a number (ie 6 in 642.#)
 				curNumber, _ = strconv.Atoi(string(c))
 				if checkForAdjacentSymbols(x, y, schematic) {
 					isPartNumber = true
 				}
-			} else if isDigit && curNumber > 0 { //non-starting digit of a number (ie 4 or 2 in 642..)
+			} else if cIsDigit && curNumber > 0 { //non-starting digit of a number (ie 4 or 2 in 642..)
 				n, _ := strconv.Atoi(string(c))
 				curNumber = curNumber*10 + n
 				if checkForAdjacentSymbols(x, y, schematic) {
 					isPartNumber = true
 				}
-			} else if !isDigit && curNumber > 0 { //just finished a number (ie . in 642.#)
+			} else if !cIsDigit && curNumber > 0 { //just finished a number (ie . in 642.#)
 				if isPartNumber {
 					sum += curNumber
 					includedNums = append(includedNums, curNumber)
@@ -114,14 +110,14 @@ func getNumbersFromRow(row []byte) []schematic_number {
 	var idx_start int
 	for x := 0; x < len(row); x++ {
 		cell := row[x]
-		if isDigit(cell) && !buildingNumber {
+		if helpers.IsDigit(cell) && !buildingNumber {
 			buildingNumber = true
 			curNumber, _ = strconv.Atoi(string(cell))
 			idx_start = x
-		} else if isDigit(cell) && buildingNumber {
+		} else if helpers.IsDigit(cell) && buildingNumber {
 			cellValue, _ := strconv.Atoi(string(cell))
 			curNumber = curNumber*10 + cellValue
-		} else if !isDigit(cell) && buildingNumber {
+		} else if !helpers.IsDigit(cell) && buildingNumber {
 			new_schematic_num := schematic_number{value: curNumber, start_idx: idx_start, end_idx: x - 1}
 			schematic_numbers = append(schematic_numbers, new_schematic_num)
 			idx_start = 0
@@ -169,22 +165,22 @@ func Part2(filename string) int {
 				var leftNumBuilder, rightNumBuilder string
 				var leftNum, rightNum int
 				var leftExists, rightExists bool
-				if x > 0 && isDigit(schematic[y][x-1]) { //calculate left part number
+				if x > 0 && helpers.IsDigit(schematic[y][x-1]) { //calculate left part number
 					leftExists = true
 					for xIter := x - 1; xIter > 0; xIter-- {
 						leftCell := schematic[y][xIter]
-						if !isDigit(leftCell) {
+						if !helpers.IsDigit(leftCell) {
 							break
 						}
 						leftNumBuilder = string(leftCell) + leftNumBuilder
 					}
 					leftNum, _ = strconv.Atoi(leftNumBuilder)
 				}
-				if x < len(schematic[y])-1 && isDigit(schematic[y][x+1]) { //calculate right part number
+				if x < len(schematic[y])-1 && helpers.IsDigit(schematic[y][x+1]) { //calculate right part number
 					rightExists = true
 					for xIter := x + 1; xIter < len(schematic[y]); xIter++ {
 						rightCell := schematic[y][xIter]
-						if !isDigit(rightCell) {
+						if !helpers.IsDigit(rightCell) {
 							break
 						}
 						rightNumBuilder = rightNumBuilder + string(rightCell)
