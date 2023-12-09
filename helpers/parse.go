@@ -28,3 +28,12 @@ func ParseInput(filename string) []string {
 func IsDigit(b byte) bool {
 	return b >= '0' && b <= '9'
 }
+
+func Between(lower, upper, needle int) bool {
+	if needle > upper || needle < lower {
+		return false
+	} else {
+		return true
+	}
+
+}

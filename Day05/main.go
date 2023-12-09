@@ -18,9 +18,29 @@ type conversion struct {
 	length      int
 }
 
+func (c *conversion) translateSeed(sourceSeed int) int {
+	if !(helpers.Between(c.sourceStart, c.sourceStart+c.length, sourceSeed)) { //not in map
+		return sourceSeed
+	} else {
+		diff := sourceSeed - c.sourceStart
+		return c.destStart + diff
+	}
+
+}
+
 func Part1(filename string) int {
 	return 0
 }
+
+func createConversion(line string) *conversion {
+	numbers := strings.Split(line, " ")
+	c := new(conversion)
+	c.destStart, _ = strconv.Atoi(numbers[0])
+	c.sourceStart, _ = strconv.Atoi(numbers[1])
+	c.length, _ = strconv.Atoi(numbers[2])
+	return c
+}
+
 func main() {
 	fmt.Println(Part1("input.txt"))
 }
