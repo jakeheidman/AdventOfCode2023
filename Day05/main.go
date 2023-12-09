@@ -32,6 +32,18 @@ func Part1(filename string) int {
 	return 0
 }
 
+func getSeeds(line string) []int {
+	var s []int
+	line = strings.Trim(line, "seeds: ")
+	seeds := strings.Split(line, " ")
+	for _, seed := range seeds {
+		seedNum, _ := strconv.Atoi(seed)
+		s = append(s, seedNum)
+	}
+	return s
+
+}
+
 func createConversion(line string) *conversion {
 	numbers := strings.Split(line, " ")
 	c := new(conversion)
