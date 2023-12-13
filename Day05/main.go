@@ -20,7 +20,11 @@ func (a *almanacMap) addConversion(c *conversion) {
 func (a *almanacMap) seedToLocation(seed int) int {
 	convertedSeed := seed
 	for _, c := range a.maps {
-		convertedSeed = c.translateSeed(convertedSeed)
+
+		newConvertedSeed := c.translateSeed(convertedSeed)
+		if newConvertedSeed != convertedSeed {
+			return newConvertedSeed
+		}
 	}
 	return convertedSeed
 }
@@ -48,10 +52,11 @@ func Part1(filename string) int {
 	almanacs := createAlmanacs(input)
 	lowestLocation := math.MaxInt
 	for _, s := range seeds {
+		updatedValue := s
 		for _, a := range almanacs {
-			location := a.seedToLocation(s)
-			lowestLocation = min(lowestLocation, location)
+			updatedValue = a.seedToLocation(updatedValue)
 		}
+		lowestLocation = min(lowestLocation, updatedValue)
 	}
 	return lowestLocation
 }
