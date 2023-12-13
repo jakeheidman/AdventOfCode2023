@@ -35,6 +35,12 @@ type conversion struct {
 	length      int
 }
 
+type seeds map[int]struct{}
+
+func (s seeds) add(seed int) {
+	s[seed] = struct{}{}
+}
+
 func (c *conversion) translateSeed(sourceSeed int) int {
 	if !(helpers.Between(c.sourceStart, c.sourceStart+c.length-1, sourceSeed)) { //not in map
 		return sourceSeed
@@ -61,6 +67,22 @@ func Part1(filename string) int {
 	return lowestLocation
 }
 
+func Part2(filename string) int {
+	input := helpers.ParseInput(filename)
+	se := getSeedRanges(input[0])
+	input = input[3:]
+	almanacs := createAlmanacs(input)
+	lowestLocation := math.MaxInt
+	for s, _ := range se {
+		updatedValue := s
+		for _, a := range almanacs {
+			updatedValue = a.seedToLocation(updatedValue)
+		}
+		lowestLocation = min(lowestLocation, updatedValue)
+	}
+	return lowestLocation
+}
+
 func getSeeds(line string) []int {
 	var s []int
 	line = strings.Trim(line, "seeds: ")
@@ -68,6 +90,20 @@ func getSeeds(line string) []int {
 	for _, seed := range seeds {
 		seedNum, _ := strconv.Atoi(seed)
 		s = append(s, seedNum)
+	}
+	return s
+}
+
+func getSeedRanges(line string) seeds {
+	s := seeds{}
+	line = strings.Trim(line, "seeds: ")
+	nums := strings.Split(line, " ")
+	for i := 0; i < len(nums)-1; i += 2 {
+		seedRangeStart, _ := strconv.Atoi(nums[i])
+		seedRangeLength, _ := strconv.Atoi(nums[i+1])
+		for j := seedRangeStart; j < seedRangeStart+seedRangeLength; j++ {
+			s.add(j)
+		}
 	}
 	return s
 }
@@ -100,5 +136,5 @@ func createConversion(line string) *conversion {
 }
 
 func main() {
-	fmt.Println(Part1("input.txt"))
+	fmt.Println(Part2("input.txt"))
 }
