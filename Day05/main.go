@@ -9,7 +9,19 @@ import (
 )
 
 type almanacMap struct {
-	maps []conversion
+	maps []*conversion
+}
+
+func (a *almanacMap) addConversion(c *conversion) {
+	a.maps = append(a.maps, c)
+}
+
+func (a *almanacMap) seedToLocation(seed int) int {
+	convertedSeed := seed
+	for _, c := range a.maps {
+		convertedSeed = c.translateSeed(convertedSeed)
+	}
+	return convertedSeed
 }
 
 type conversion struct {
@@ -41,7 +53,24 @@ func getSeeds(line string) []int {
 		s = append(s, seedNum)
 	}
 	return s
+}
 
+func createAlmanacs(input []string) []*almanacMap {
+	var almanac []*almanacMap
+	a := new(almanacMap)
+	for i := 0; i < len(input); i++ {
+		line := input[i]
+		if line == "" { //end of a almanac map, so skip the next line which is a map name
+			almanac = append(almanac, a)
+			i++
+			a = new(almanacMap)
+		} else if !strings.Contains(line, "map") {
+			c := createConversion(line)
+			a.addConversion(c)
+		}
+	}
+	almanac = append(almanac, a)
+	return almanac
 }
 
 func createConversion(line string) *conversion {
