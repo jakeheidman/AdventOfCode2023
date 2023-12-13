@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 
@@ -31,7 +32,7 @@ type conversion struct {
 }
 
 func (c *conversion) translateSeed(sourceSeed int) int {
-	if !(helpers.Between(c.sourceStart, c.sourceStart+c.length, sourceSeed)) { //not in map
+	if !(helpers.Between(c.sourceStart, c.sourceStart+c.length-1, sourceSeed)) { //not in map
 		return sourceSeed
 	} else {
 		diff := sourceSeed - c.sourceStart
@@ -41,7 +42,18 @@ func (c *conversion) translateSeed(sourceSeed int) int {
 }
 
 func Part1(filename string) int {
-	return 0
+	input := helpers.ParseInput(filename)
+	seeds := getSeeds(input[0])
+	input = input[2:]
+	almanacs := createAlmanacs(input)
+	lowestLocation := math.MaxInt
+	for _, s := range seeds {
+		for _, a := range almanacs {
+			location := a.seedToLocation(s)
+			lowestLocation = min(lowestLocation, location)
+		}
+	}
+	return lowestLocation
 }
 
 func getSeeds(line string) []int {
@@ -83,5 +95,5 @@ func createConversion(line string) *conversion {
 }
 
 func main() {
-	fmt.Println(Part1("input.txt"))
+	fmt.Println(Part1("test_input.txt"))
 }
