@@ -71,11 +71,27 @@ func getRaces(times, distances string) []*race {
 	return races
 }
 
+func getKernedRace(times, distances string) *race {
+	times = strings.TrimLeft(times, "Time: ")
+	distances = strings.TrimLeft(distances, "Distance: ")
+	time := strings.ReplaceAll(times, " ", "")
+	distance := strings.ReplaceAll(distances, " ", "")
+
+	t, _ := strconv.Atoi(time)
+	d, _ := strconv.Atoi(distance)
+	kernedRace := makeRace(t, d)
+	return kernedRace
+}
+
 func Part2(filename string) int {
-	return 0
+	input := helpers.ParseInput(filename)
+	times := input[0]
+	distances := input[1]
+	race := getKernedRace(times, distances)
+	p := race.numRecordPermutations()
+	return p
 }
 
 func main() {
-	//getRaces("Time:      7  15   30", "")
-	fmt.Println(Part1("input.txt"))
+	fmt.Println(Part2("input.txt"))
 }
