@@ -51,12 +51,14 @@ func (h *hand) calculateHandStrength() handStrength {
 }
 
 func (h *hand) calculateJokerHandStrength() handStrength {
+	s := h.calculateHandStrength()
+	h.strength = s
 	charTracker := getCardTracker(h.cards)
 	numJokers, ok := charTracker['J']
 	if !ok { //no jokers, calculate normally
 		return h.calculateHandStrength()
 	} else {
-		return max(FiveOfKind, h.calculateHandStrength()+handStrength(numJokers))
+		return jokerStrengthConversion(h.strength, numJokers)
 	}
 
 }
@@ -116,7 +118,7 @@ func cardValue(card byte) int {
 	case "T":
 		return 10
 	case "J":
-		return 11
+		return 1
 	case "Q":
 		return 12
 	case "K":
@@ -147,6 +149,57 @@ func createHand(cards string, bet int) *hand {
 	s := h.calculateHandStrength()
 	h.strength = s
 	return h
+}
+
+func jokerStrengthConversion(strength handStrength, numJokers int) handStrength {
+	if numJokers == 0 {
+		return strength
+	}
+	if numJokers >= 4 {
+		return FiveOfKind
+	}
+	if numJokers == 3 {
+		if strength == FullHouse {
+			return FiveOfKind
+		}
+		if strength == ThreeOfKind {
+			return FourOfKind
+		}
+	}
+	if numJokers == 2 {
+		if strength == FullHouse {
+			return FiveOfKind
+		}
+		if strength == ThreeOfKind { //impossible
+			fmt.Println("impossible num jokers 2 3 of kind case reached")
+			return FourOfKind
+		}
+		if strength == TwoPair {
+			return FourOfKind
+		}
+		if strength == OnePair {
+			return ThreeOfKind
+		}
+		fmt.Println("num jokers 2 base case incorrectly reached")
+	}
+	if numJokers == 1 {
+		if strength == FourOfKind {
+			return FiveOfKind
+		}
+		if strength == ThreeOfKind {
+			return FourOfKind
+		}
+		if strength == TwoPair {
+			return FullHouse
+		}
+		if strength == OnePair {
+			return ThreeOfKind
+		}
+		if strength == HighCard {
+			return OnePair
+		}
+	}
+	return strength
 }
 
 func createJokerHand(cards string, bet int) *hand {
